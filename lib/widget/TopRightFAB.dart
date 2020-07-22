@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class TopRightFAB extends StatelessWidget {
-  const TopRightFAB({
-    Key key,
-  }) : super(key: key);
+  TopRightFAB({@required this.onTap});
+
+  final Function onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class TopRightFAB extends StatelessWidget {
           child: FloatingActionButton(
             backgroundColor: Color(0xFF2F3148),
             child: Icon(Icons.add),
-            onPressed: () {},
+            onPressed: onTap,
           ),
         ),
       ],

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 class WeatherText extends StatelessWidget {
-  const WeatherText({
-    Key key,
-  }) : super(key: key);
+  WeatherText(this.desc, this.city, this.temp);
+
+  final String desc;
+  final String city;
+  final int temp;
 
   @override
   Widget build(BuildContext context) {
@@ -11,12 +13,12 @@ class WeatherText extends StatelessWidget {
       //Weather info
       children: <Widget>[
         Text(
-          "Clear",
+          desc,
           style: TextStyle(
               color: Colors.white, fontWeight: FontWeight.bold, fontSize: 35.0),
         ),
         Text(
-          "Greater London",
+          city,
           style: TextStyle(
               color: Colors.white, fontWeight: FontWeight.w400, fontSize: 30.0),
         ),
@@ -24,7 +26,7 @@ class WeatherText extends StatelessWidget {
           height: 10.0,
         ),
         Text(
-          "21°",
+          "$temp°",
           style: TextStyle(
               color: Colors.white, fontWeight: FontWeight.bold, fontSize: 55.0),
         ),

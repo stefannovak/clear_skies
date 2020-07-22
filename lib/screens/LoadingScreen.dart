@@ -1,5 +1,6 @@
 import 'package:clear_skies/location/Location.dart';
 import 'package:clear_skies/screens/HomeScreen.dart';
+import 'package:clear_skies/utilities/WeatherModel.dart';
 import 'package:clear_skies/utilities/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -19,12 +20,20 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   void getLocalWeather() async {
-    var locationData = await location.getCurrentLocation();
+//    var locationData = await location.getCurrentLocation();
+//
+//    Navigator.push(
+//      context,
+//      MaterialPageRoute(builder: (context) {
+//        return HomeScreen(locationData);
+//      }),
+//    );
+    var weatherData = await WeatherModel().getLocationWeather();
 
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) {
-        return HomeScreen(locationData);
+        return HomeScreen(weatherData);
       }),
     );
   }

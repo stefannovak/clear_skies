@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class OvalWeather extends StatelessWidget {
-  final String miniIcon;
+  final String iconCode;
   final int temp;
   final String time;
 
-  OvalWeather(this.miniIcon, this.temp, this.time);
+  OvalWeather(this.iconCode, this.temp, this.time);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class OvalWeather extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Image.asset(
-              'images/a01d.png',
+              'images/a$iconCode.png',
               width: 40.0,
               height: 40.0,
             ),
