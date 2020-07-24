@@ -26,7 +26,7 @@ class WeatherText extends StatelessWidget {
           height: 10.0,
         ),
         Text(
-          "$temp°",
+          "${temp.toString()}°c",
           style: TextStyle(
               color: Colors.white, fontWeight: FontWeight.bold, fontSize: 55.0),
         ),

@@ -6,12 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class LoadingScreen extends StatefulWidget {
+  final String unit;
+  LoadingScreen(this.unit);
+
   @override
   _LoadingScreenState createState() => _LoadingScreenState();
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
   Location location = Location();
+//  String defaultUnit = "metric";
 
   @override
   void initState() {
@@ -20,15 +24,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   void getLocalWeather() async {
-//    var locationData = await location.getCurrentLocation();
-//
-//    Navigator.push(
-//      context,
-//      MaterialPageRoute(builder: (context) {
-//        return HomeScreen(locationData);
-//      }),
-//    );
-    var weatherData = await WeatherModel().getLocationWeather();
+    print(widget.unit + "LKFJGHHKJDLFH");
+    var weatherData = await WeatherModel().getLocationWeather(widget.unit);
 
     Navigator.push(
       context,

@@ -1,6 +1,7 @@
 import 'package:clear_skies/location/Location.dart';
 import 'package:clear_skies/screens/CityScreen.dart';
 import 'package:clear_skies/screens/DetailedScreen.dart';
+import 'package:clear_skies/screens/LoadingScreen.dart';
 import 'package:clear_skies/utilities/WeatherModel.dart';
 import 'package:clear_skies/widget/OvalWeather.dart';
 import 'package:clear_skies/widget/TopRightFAB.dart';
@@ -20,6 +21,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   WeatherModel weatherModel = WeatherModel();
+  String defaultUnit = "metric";
+  int count = 0;
 
   /////////////////////////////////List Tile
   int selectedIndex = 0;
@@ -32,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int temp;
   String condition;
   String localCity;
+  String main;
 
   //////////////////////////////////HOURLY
   List<OvalWeather> hourlyWeather = [];
@@ -74,36 +78,55 @@ class _HomeScreenState extends State<HomeScreen> {
   int tenTime;
   int elevenTime;
 
+  String oneTimeNumber;
+  String twoTimeNumber;
+  String threeTimeNumber;
+  String fourTimeNumber;
+  String fiveTimeNumber;
+  String sixTimeNumber;
+  String sevenTimeNumber;
+  String eightTimeNumber;
+  String nineTimeNumber;
+  String tenTimeNumber;
+  String elevenTimeNumber;
+
   ///////////////////////////////DAILY
   List<OvalWeather> dailyWeather = [];
 
   String oneDayCode;
   int oneDayTemp;
-  String oneDayDay;
+  int oneDayDay;
+  String oneDayString;
 
   String twoDayCode;
   int twoDayTemp;
-  String twoDayDay;
+  int twoDayDay;
+  String twoDayString;
 
   String threeDayCode;
   int threeDayTemp;
-  String threeDayDay;
+  int threeDayDay;
+  String threeDayString;
 
   String fourDayCode;
   int fourDayTemp;
-  String fourDayDay;
+  int fourDayDay;
+  String fourDayString;
 
   String fiveDayCode;
   int fiveDayTemp;
-  String fiveDayDay;
+  int fiveDayDay;
+  String fiveDayString;
 
   String sixDayCode;
   int sixDayTemp;
-  String sixDayDay;
+  int sixDayDay;
+  String sixDayString;
 
   String sevenDayCode;
   int sevenDayTemp;
-  String sevenDayDay;
+  int sevenDayDay;
+  String sevenDayString;
 
   @override
   void initState() {
@@ -112,106 +135,168 @@ class _HomeScreenState extends State<HomeScreen> {
     updateUI(widget.locationData);
   }
 
+  void toDetailScreen() async {
+    var weatherData = await WeatherModel().getLocationWeather(defaultUnit);
+
+    print(defaultUnit + "AYYYYYYYYY");
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) {
+        return DetailedScreen(weatherData);
+      }),
+    );
+  }
+
+  //Think i can just say if its "50d" weather code, just return clear
+  String getBackground(String main) {
+    if (main == "Mist" ||
+        main == "Smoke" ||
+        main == "Haze" ||
+        main == "Dust" ||
+        main == "Fog" ||
+        main == "Sand" ||
+        main == "Ash" ||
+        main == "Squall" ||
+        main == "Tornado") {
+      return ("Clear");
+    } else if (nowCond == "01n") {
+      return ("Stars");
+    } else {
+      return main;
+    }
+  }
+
   void updateUI(dynamic weatherData) async {
     Location location = Location();
     await location.getCurrentLocation();
 
-//    localCity = getCityFromCoordinates(location.latitude, location.longitude)
-//        .toString();
-
     localCity =
         await getCityFromCoordinates(location.latitude, location.longitude);
-    print(localCity);
+    localCity.toLowerCase();
 
-    setState(() {
-      ///////////////////////////////Weather Column
-      double temperature = weatherData["current"]["temp"];
-      temp = temperature.toInt();
-      condition = weatherData["current"]["weather"][0]["description"];
+//    unixToDay(1595505600);
 
-      /////////////////////////////DAILY WEATHER INFO
-      oneDayCode = weatherData["daily"][1]["weather"][0]["icon"];
-      oneDayTemp = weatherData["daily"][1]["temp"]["day"].toInt();
-      oneDayDay = "Mondayz";
+    setState(
+      () {
+        ///////////////////////////////Weather Column
+        double temperature = weatherData["current"]["temp"];
+        temp = temperature.toInt();
+        condition = weatherData["current"]["weather"][0]["description"];
+        main = weatherData["current"]["weather"][0]["main"];
 
-      twoDayCode = weatherData["daily"][2]["weather"][0]["icon"];
-      twoDayTemp = weatherData["daily"][2]["temp"]["day"].toInt();
+        /////////////////////////////DAILY WEATHER INFO
+        oneDayCode = weatherData["daily"][1]["weather"][0]["icon"];
+        oneDayTemp = weatherData["daily"][1]["temp"]["day"].toInt();
+        oneDayDay = unixToDay(weatherData["daily"][1]["dt"]);
+        oneDayString = weatherModel.dayToString(oneDayDay);
 
-      threeDayCode = weatherData["daily"][3]["weather"][0]["icon"];
-      threeDayTemp = weatherData["daily"][3]["temp"]["day"].toInt();
+        twoDayCode = weatherData["daily"][2]["weather"][0]["icon"];
+        twoDayTemp = weatherData["daily"][2]["temp"]["day"].toInt();
+        twoDayDay = unixToDay(weatherData["daily"][2]["dt"]);
+        twoDayString = weatherModel.dayToString(twoDayDay);
 
-      fourDayCode = weatherData["daily"][4]["weather"][0]["icon"];
-      fourDayTemp = weatherData["daily"][4]["temp"]["day"].toInt();
+        threeDayCode = weatherData["daily"][3]["weather"][0]["icon"];
+        threeDayTemp = weatherData["daily"][3]["temp"]["day"].toInt();
+        threeDayDay = unixToDay(weatherData["daily"][3]["dt"]);
+        threeDayString = weatherModel.dayToString(threeDayDay);
 
-      fiveDayCode = weatherData["daily"][5]["weather"][0]["icon"];
-      fiveDayTemp = weatherData["daily"][5]["temp"]["day"].toInt();
+        fourDayCode = weatherData["daily"][4]["weather"][0]["icon"];
+        fourDayTemp = weatherData["daily"][4]["temp"]["day"].toInt();
+        fourDayDay = unixToDay(weatherData["daily"][4]["dt"]);
+        fourDayString = weatherModel.dayToString(fourDayDay);
 
-      sixDayCode = weatherData["daily"][6]["weather"][0]["icon"];
-      sixDayTemp = weatherData["daily"][6]["temp"]["day"].toInt();
+        fiveDayCode = weatherData["daily"][5]["weather"][0]["icon"];
+        fiveDayTemp = weatherData["daily"][5]["temp"]["day"].toInt();
+        fiveDayDay = unixToDay(weatherData["daily"][5]["dt"]);
+        fiveDayString = weatherModel.dayToString(fiveDayDay);
 
-      sevenDayCode = weatherData["daily"][7]["weather"][0]["icon"];
-      sevenDayTemp = weatherData["daily"][7]["temp"]["day"].toInt();
+        sixDayCode = weatherData["daily"][6]["weather"][0]["icon"];
+        sixDayTemp = weatherData["daily"][6]["temp"]["day"].toInt();
+        sixDayDay = unixToDay(weatherData["daily"][6]["dt"]);
+        sixDayString = weatherModel.dayToString(sixDayDay);
 
-      dailyWeather.add(OvalWeather(oneDayCode, oneDayTemp, oneDayDay));
-      dailyWeather.add(OvalWeather(twoDayCode, twoDayTemp, oneDayDay));
-      dailyWeather.add(OvalWeather(threeDayCode, threeDayTemp, oneDayDay));
-      dailyWeather.add(OvalWeather(fourDayCode, fourDayTemp, oneDayDay));
-      dailyWeather.add(OvalWeather(fiveDayCode, fiveDayTemp, oneDayDay));
-      dailyWeather.add(OvalWeather(sixDayCode, sixDayTemp, oneDayDay));
-      dailyWeather.add(OvalWeather(sevenDayCode, sevenDayTemp, oneDayDay));
+        sevenDayCode = weatherData["daily"][7]["weather"][0]["icon"];
+        sevenDayTemp = weatherData["daily"][7]["temp"]["day"].toInt();
+        sevenDayDay = unixToDay(weatherData["daily"][7]["dt"]);
+        sevenDayString = weatherModel.dayToString(sevenDayDay);
 
-      ////////////////////////////////////////Hourly Data
-      nowHour = temp;
-      oneHour = weatherData["hourly"][1]["temp"].toInt();
-      twoHour = weatherData["hourly"][2]["temp"].toInt();
-      threeHour = weatherData["hourly"][3]["temp"].toInt();
-      fourHour = weatherData["hourly"][4]["temp"].toInt();
-      fiveHour = weatherData["hourly"][5]["temp"].toInt();
-      sixHour = weatherData["hourly"][6]["temp"].toInt();
-      sevenHour = weatherData["hourly"][7]["temp"].toInt();
-      eightHour = weatherData["hourly"][8]["temp"].toInt();
-      nineHour = weatherData["hourly"][9]["temp"].toInt();
-      tenHour = weatherData["hourly"][10]["temp"].toInt();
-      elevenHour = weatherData["hourly"][11]["temp"].toInt();
+        dailyWeather.add(OvalWeather(oneDayCode, oneDayTemp, oneDayString));
+        dailyWeather.add(OvalWeather(twoDayCode, twoDayTemp, twoDayString));
+        dailyWeather
+            .add(OvalWeather(threeDayCode, threeDayTemp, threeDayString));
+        dailyWeather.add(OvalWeather(fourDayCode, fourDayTemp, fourDayString));
+        dailyWeather.add(OvalWeather(fiveDayCode, fiveDayTemp, fiveDayString));
+        dailyWeather.add(OvalWeather(sixDayCode, sixDayTemp, sixDayString));
+        dailyWeather
+            .add(OvalWeather(sevenDayCode, sevenDayTemp, sevenDayString));
 
-      nowCond = weatherData["hourly"][0]["weather"][0]["icon"];
-      oneCond = weatherData["hourly"][1]["weather"][0]["icon"];
-      twoCond = weatherData["hourly"][2]["weather"][0]["icon"];
-      threeCond = weatherData["hourly"][3]["weather"][0]["icon"];
-      fourCond = weatherData["hourly"][4]["weather"][0]["icon"];
-      fiveCond = weatherData["hourly"][5]["weather"][0]["icon"];
-      sixCond = weatherData["hourly"][6]["weather"][0]["icon"];
-      sevenCond = weatherData["hourly"][7]["weather"][0]["icon"];
-      eightCond = weatherData["hourly"][8]["weather"][0]["icon"];
-      nineCond = weatherData["hourly"][9]["weather"][0]["icon"];
-      tenCond = weatherData["hourly"][10]["weather"][0]["icon"];
-      elevenCond = weatherData["hourly"][11]["weather"][0]["icon"];
+        ////////////////////////////////////////Hourly Data
+        nowHour = weatherData["hourly"][0]["temp"].toInt();
+        oneHour = weatherData["hourly"][1]["temp"].toInt();
+        twoHour = weatherData["hourly"][2]["temp"].toInt();
+        threeHour = weatherData["hourly"][3]["temp"].toInt();
+        fourHour = weatherData["hourly"][4]["temp"].toInt();
+        fiveHour = weatherData["hourly"][5]["temp"].toInt();
+        sixHour = weatherData["hourly"][6]["temp"].toInt();
+        sevenHour = weatherData["hourly"][7]["temp"].toInt();
+        eightHour = weatherData["hourly"][8]["temp"].toInt();
+        nineHour = weatherData["hourly"][9]["temp"].toInt();
+        tenHour = weatherData["hourly"][10]["temp"].toInt();
+        elevenHour = weatherData["hourly"][11]["temp"].toInt();
 
-      oneTime = weatherData["hourly"][1]["dt"];
-      twoTime = weatherData["hourly"][2]["dt"];
-      threeTime = weatherData["hourly"][3]["dt"];
-      fourTime = weatherData["hourly"][4]["dt"];
-      fiveTime = weatherData["hourly"][5]["dt"];
-      sixTime = weatherData["hourly"][6]["dt"];
-      sevenTime = weatherData["hourly"][7]["dt"];
-      eightTime = weatherData["hourly"][8]["dt"];
-      nineTime = weatherData["hourly"][9]["dt"];
-      tenTime = weatherData["hourly"][10]["dt"];
-      elevenTime = weatherData["hourly"][11]["dt"];
+        nowCond = weatherData["hourly"][0]["weather"][0]["icon"];
+        oneCond = weatherData["hourly"][1]["weather"][0]["icon"];
+        twoCond = weatherData["hourly"][2]["weather"][0]["icon"];
+        threeCond = weatherData["hourly"][3]["weather"][0]["icon"];
+        fourCond = weatherData["hourly"][4]["weather"][0]["icon"];
+        fiveCond = weatherData["hourly"][5]["weather"][0]["icon"];
+        sixCond = weatherData["hourly"][6]["weather"][0]["icon"];
+        sevenCond = weatherData["hourly"][7]["weather"][0]["icon"];
+        eightCond = weatherData["hourly"][8]["weather"][0]["icon"];
+        nineCond = weatherData["hourly"][9]["weather"][0]["icon"];
+        tenCond = weatherData["hourly"][10]["weather"][0]["icon"];
+        elevenCond = weatherData["hourly"][11]["weather"][0]["icon"];
 
-      hourlyWeather.add(OvalWeather(nowCond, nowHour, "Now"));
-      hourlyWeather.add(OvalWeather(oneCond, oneHour, "one"));
-      hourlyWeather.add(OvalWeather(twoCond, twoHour, "two"));
-      hourlyWeather.add(OvalWeather(threeCond, threeHour, "9pm")); //4
-      hourlyWeather.add(OvalWeather(fourCond, fourHour, "Now"));
-      hourlyWeather.add(OvalWeather(fiveCond, fiveHour, "Now"));
-      hourlyWeather.add(OvalWeather(sixCond, sixHour, "Now"));
-      hourlyWeather.add(OvalWeather(sevenCond, sevenHour, "Now")); //8
-      hourlyWeather.add(OvalWeather(eightCond, eightHour, "Now"));
-      hourlyWeather.add(OvalWeather(nineCond, nineHour, "Now"));
-      hourlyWeather.add(OvalWeather(tenCond, tenHour, "Now"));
-      hourlyWeather.add(OvalWeather(elevenCond, elevenHour, "Now")); //12
-    });
+        oneTime = unixToHour(weatherData["hourly"][1]["dt"]);
+        twoTime = unixToHour(weatherData["hourly"][2]["dt"]);
+        threeTime = unixToHour(weatherData["hourly"][3]["dt"]);
+        fourTime = unixToHour(weatherData["hourly"][4]["dt"]);
+        fiveTime = unixToHour(weatherData["hourly"][5]["dt"]);
+        sixTime = unixToHour(weatherData["hourly"][6]["dt"]);
+        sevenTime = unixToHour(weatherData["hourly"][7]["dt"]);
+        eightTime = unixToHour(weatherData["hourly"][8]["dt"]);
+        nineTime = unixToHour(weatherData["hourly"][9]["dt"]);
+        tenTime = unixToHour(weatherData["hourly"][10]["dt"]);
+        elevenTime = unixToHour(weatherData["hourly"][11]["dt"]);
+
+        oneTimeNumber = weatherModel.hourToNiceTime(oneTime);
+        twoTimeNumber = weatherModel.hourToNiceTime(twoTime);
+        threeTimeNumber = weatherModel.hourToNiceTime(threeTime);
+        fourTimeNumber = weatherModel.hourToNiceTime(fourTime);
+        fiveTimeNumber = weatherModel.hourToNiceTime(fiveTime);
+        sixTimeNumber = weatherModel.hourToNiceTime(sixTime);
+        sevenTimeNumber = weatherModel.hourToNiceTime(sevenTime);
+        eightTimeNumber = weatherModel.hourToNiceTime(eightTime);
+        nineTimeNumber = weatherModel.hourToNiceTime(nineTime);
+        tenTimeNumber = weatherModel.hourToNiceTime(tenTime);
+        elevenTimeNumber = weatherModel.hourToNiceTime(elevenTime);
+
+        hourlyWeather.add(OvalWeather(nowCond, nowHour, "Now"));
+        hourlyWeather.add(OvalWeather(oneCond, oneHour, oneTimeNumber));
+        hourlyWeather.add(OvalWeather(twoCond, twoHour, twoTimeNumber));
+        hourlyWeather.add(OvalWeather(threeCond, threeHour, threeTimeNumber));
+        hourlyWeather.add(OvalWeather(fourCond, fourHour, fourTimeNumber));
+        hourlyWeather.add(OvalWeather(fiveCond, fiveHour, fiveTimeNumber));
+        hourlyWeather.add(OvalWeather(sixCond, sixHour, sixTimeNumber));
+        hourlyWeather.add(OvalWeather(sevenCond, sevenHour, sevenTimeNumber));
+        hourlyWeather.add(OvalWeather(eightCond, eightHour, eightTimeNumber));
+        hourlyWeather.add(OvalWeather(nineCond, nineHour, nineTimeNumber));
+        hourlyWeather.add(OvalWeather(tenCond, tenHour, tenTimeNumber));
+        hourlyWeather
+            .add(OvalWeather(elevenCond, elevenHour, elevenTimeNumber));
+      },
+    );
   }
 
   Future<String> getCityFromCoordinates(double lat, double long) async {
@@ -219,12 +304,19 @@ class _HomeScreenState extends State<HomeScreen> {
     var addresses =
         await Geocoder.local.findAddressesFromCoordinates(coordinates);
     Address first = addresses.first;
-    return first.subAdminArea;
+    return first.subAdminArea.toLowerCase();
   }
 
-  String unixToHour(int unix) {
-    var now = DateTime.fromMillisecondsSinceEpoch(unix);
-    return now.toString();
+  int unixToHour(int unix) {
+    var time = DateTime.fromMillisecondsSinceEpoch(unix * 1000);
+    var dateString = time.hour;
+    return dateString;
+  }
+
+  int unixToDay(int unix) {
+    var time = DateTime.fromMillisecondsSinceEpoch(unix * 1000);
+    var dateString = time.weekday;
+    return dateString;
   }
 
   @override
@@ -233,7 +325,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('images/sun.jpg'),
+            image: AssetImage('images/${getBackground(main)}.jpg'),
             fit: BoxFit.cover,
           ),
         ),
@@ -247,12 +339,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CityScreen(),
+                        builder: (context) => LoadingScreen("imperial"),
                       ),
                     );
                   },
                 ),
-                WeatherText(condition, localCity, temp),
+                Container(child: WeatherText(condition, localCity, temp)),
                 Container(
                   //More weather info
                   height: 250.0,
@@ -273,9 +365,26 @@ class _HomeScreenState extends State<HomeScreen> {
                               itemCount: weatherInfo.length,
                               itemBuilder: (BuildContext context, int index) {
                                 return GestureDetector(
+                                  onDoubleTap: () {
+                                    //Somehow this conveniently stops the problem
+                                    //of multiple clicks on the button
+                                    if (selectedIndex ==
+                                            index && //GOING TO DETAIL SCREEN
+                                        weatherInfo[selectedIndex] ==
+                                            "Detailed") {
+                                      toDetailScreen();
+                                    }
+                                  },
                                   onTap: () {
                                     setState(() {
                                       selectedIndex = index;
+                                      //This Week
+                                      if (selectedIndex ==
+                                              index && //WEEK FORECAST
+                                          weatherInfo[selectedIndex] ==
+                                              "Today") {
+                                        print("Test Today");
+                                      }
                                       //This Week
                                       if (selectedIndex ==
                                               index && //WEEK FORECAST
@@ -288,13 +397,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               index && //GOING TO DETAIL SCREEN
                                           weatherInfo[selectedIndex] ==
                                               "Detailed") {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                DetailedScreen(),
-                                          ),
-                                        );
+                                        toDetailScreen();
+                                        //Sets the Today text to be underlined
                                         selectedIndex = 0;
                                       } //End of Detail IF statement
                                     });
@@ -347,13 +451,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 hourlyWeather[11],
 
 //                                if(weatherInfo[selectedIndex] == "This Week") {}
-//                                dailyWeather[0],
-//                                dailyWeather[1],
-//                                dailyWeather[2],
-//                                dailyWeather[3],
-//                                dailyWeather[4],
-//                                dailyWeather[5],
-//                                dailyWeather[6],
+                                dailyWeather[0],
+                                dailyWeather[1],
+                                dailyWeather[2],
+                                dailyWeather[3],
+                                dailyWeather[4],
+                                dailyWeather[5],
+                                dailyWeather[6],
                               ],
                             ),
                           ],
