@@ -128,6 +128,8 @@ class _HomeScreenState extends State<HomeScreen> {
   int sevenDayDay;
   String sevenDayString;
 
+  String buttonIndicator = "F";
+
   @override
   void initState() {
     // TODO: implement initState
@@ -221,15 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
         sevenDayDay = unixToDay(weatherData["daily"][7]["dt"]);
         sevenDayString = weatherModel.dayToString(sevenDayDay);
 
-        dailyWeather.add(OvalWeather(oneDayCode, oneDayTemp, oneDayString));
-        dailyWeather.add(OvalWeather(twoDayCode, twoDayTemp, twoDayString));
-        dailyWeather
-            .add(OvalWeather(threeDayCode, threeDayTemp, threeDayString));
-        dailyWeather.add(OvalWeather(fourDayCode, fourDayTemp, fourDayString));
-        dailyWeather.add(OvalWeather(fiveDayCode, fiveDayTemp, fiveDayString));
-        dailyWeather.add(OvalWeather(sixDayCode, sixDayTemp, sixDayString));
-        dailyWeather
-            .add(OvalWeather(sevenDayCode, sevenDayTemp, sevenDayString));
+        populateDaily();
 
         ////////////////////////////////////////Hourly Data
         nowHour = weatherData["hourly"][0]["temp"].toInt();
@@ -282,21 +276,34 @@ class _HomeScreenState extends State<HomeScreen> {
         tenTimeNumber = weatherModel.hourToNiceTime(tenTime);
         elevenTimeNumber = weatherModel.hourToNiceTime(elevenTime);
 
-        hourlyWeather.add(OvalWeather(nowCond, nowHour, "Now"));
-        hourlyWeather.add(OvalWeather(oneCond, oneHour, oneTimeNumber));
-        hourlyWeather.add(OvalWeather(twoCond, twoHour, twoTimeNumber));
-        hourlyWeather.add(OvalWeather(threeCond, threeHour, threeTimeNumber));
-        hourlyWeather.add(OvalWeather(fourCond, fourHour, fourTimeNumber));
-        hourlyWeather.add(OvalWeather(fiveCond, fiveHour, fiveTimeNumber));
-        hourlyWeather.add(OvalWeather(sixCond, sixHour, sixTimeNumber));
-        hourlyWeather.add(OvalWeather(sevenCond, sevenHour, sevenTimeNumber));
-        hourlyWeather.add(OvalWeather(eightCond, eightHour, eightTimeNumber));
-        hourlyWeather.add(OvalWeather(nineCond, nineHour, nineTimeNumber));
-        hourlyWeather.add(OvalWeather(tenCond, tenHour, tenTimeNumber));
-        hourlyWeather
-            .add(OvalWeather(elevenCond, elevenHour, elevenTimeNumber));
+        populateHourly();
       },
     );
+  }
+
+  void populateDaily() {
+    dailyWeather.add(OvalWeather(oneDayCode, oneDayTemp, oneDayString));
+    dailyWeather.add(OvalWeather(twoDayCode, twoDayTemp, twoDayString));
+    dailyWeather.add(OvalWeather(threeDayCode, threeDayTemp, threeDayString));
+    dailyWeather.add(OvalWeather(fourDayCode, fourDayTemp, fourDayString));
+    dailyWeather.add(OvalWeather(fiveDayCode, fiveDayTemp, fiveDayString));
+    dailyWeather.add(OvalWeather(sixDayCode, sixDayTemp, sixDayString));
+    dailyWeather.add(OvalWeather(sevenDayCode, sevenDayTemp, sevenDayString));
+  }
+
+  void populateHourly() {
+    hourlyWeather.add((OvalWeather(nowCond, nowHour, "Now")));
+    hourlyWeather.add(OvalWeather(oneCond, oneHour, oneTimeNumber));
+    hourlyWeather.add(OvalWeather(twoCond, twoHour, twoTimeNumber));
+    hourlyWeather.add(OvalWeather(threeCond, threeHour, threeTimeNumber));
+    hourlyWeather.add(OvalWeather(fourCond, fourHour, fourTimeNumber));
+    hourlyWeather.add(OvalWeather(fiveCond, fiveHour, fiveTimeNumber));
+    hourlyWeather.add(OvalWeather(sixCond, sixHour, sixTimeNumber));
+    hourlyWeather.add(OvalWeather(sevenCond, sevenHour, sevenTimeNumber));
+    hourlyWeather.add(OvalWeather(eightCond, eightHour, eightTimeNumber));
+    hourlyWeather.add(OvalWeather(nineCond, nineHour, nineTimeNumber));
+    hourlyWeather.add(OvalWeather(tenCond, tenHour, tenTimeNumber));
+    hourlyWeather.add(OvalWeather(elevenCond, elevenHour, elevenTimeNumber));
   }
 
   Future<String> getCityFromCoordinates(double lat, double long) async {
@@ -319,6 +326,46 @@ class _HomeScreenState extends State<HomeScreen> {
     return dateString;
   }
 
+  List<Widget> selectedWeather() {
+    print("test");
+    if (selectedIndex == 0) {
+      return [
+        hourlyWeather[0],
+        hourlyWeather[1],
+        hourlyWeather[2],
+        hourlyWeather[3],
+        hourlyWeather[4],
+        hourlyWeather[5],
+        hourlyWeather[6],
+        hourlyWeather[7],
+        hourlyWeather[8],
+        hourlyWeather[9],
+        hourlyWeather[10],
+        hourlyWeather[11],
+      ];
+    } else if (selectedIndex == 1) {
+      return [
+        dailyWeather[0],
+        dailyWeather[1],
+        dailyWeather[2],
+        dailyWeather[3],
+        dailyWeather[4],
+        dailyWeather[5],
+        dailyWeather[6],
+      ];
+    } else {
+      print("RIP");
+    }
+  }
+
+  String getButtonText() {
+    if (buttonIndicator == "F") {
+      return "F";
+    } else if (buttonIndicator == "C") {
+      return "C";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -336,6 +383,10 @@ class _HomeScreenState extends State<HomeScreen> {
               children: <Widget>[
                 TopRightFAB(
                   onTap: () {
+                    setState(() {
+                      buttonIndicator = "C";
+                    });
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -343,6 +394,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     );
                   },
+                  text: getButtonText(),
                 ),
                 Container(child: WeatherText(condition, localCity, temp)),
                 Container(
@@ -361,63 +413,51 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(20.0, 10, 0, 0),
                           child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: weatherInfo.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return GestureDetector(
-                                  onDoubleTap: () {
-                                    //Somehow this conveniently stops the problem
-                                    //of multiple clicks on the button
+                            scrollDirection: Axis.horizontal,
+                            itemCount: weatherInfo.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return GestureDetector(
+                                onDoubleTap: () {
+                                  //Somehow this conveniently stops the problem
+                                  //of multiple clicks on the button
+                                  if (selectedIndex ==
+                                          index && //GOING TO DETAIL SCREEN
+                                      weatherInfo[selectedIndex] ==
+                                          "Detailed") {
+                                    toDetailScreen();
+                                  }
+                                },
+                                onTap: () {
+                                  setState(() {
+                                    selectedIndex = index;
+
+                                    //Detail
                                     if (selectedIndex ==
                                             index && //GOING TO DETAIL SCREEN
                                         weatherInfo[selectedIndex] ==
                                             "Detailed") {
                                       toDetailScreen();
-                                    }
-                                  },
-                                  onTap: () {
-                                    setState(() {
-                                      selectedIndex = index;
-                                      //This Week
-                                      if (selectedIndex ==
-                                              index && //WEEK FORECAST
-                                          weatherInfo[selectedIndex] ==
-                                              "Today") {
-                                        print("Test Today");
-                                      }
-                                      //This Week
-                                      if (selectedIndex ==
-                                              index && //WEEK FORECAST
-                                          weatherInfo[selectedIndex] ==
-                                              "This Week") {
-                                        print("Test");
-                                      }
-                                      //Detail
-                                      if (selectedIndex ==
-                                              index && //GOING TO DETAIL SCREEN
-                                          weatherInfo[selectedIndex] ==
-                                              "Detailed") {
-                                        toDetailScreen();
-                                        //Sets the Today text to be underlined
-                                        selectedIndex = 0;
-                                      } //End of Detail IF statement
-                                    });
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Text(
-                                      weatherInfo[index],
-                                      style: TextStyle(
-                                          color: index == selectedIndex
-                                              ? Colors.white
-                                              : Colors.grey,
-                                          decoration: index == selectedIndex
-                                              ? TextDecoration.underline
-                                              : null),
-                                    ),
+                                      //Sets the Today text to be underlined
+                                      selectedIndex = 0;
+                                    } //End of Detail IF statement
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Text(
+                                    weatherInfo[index],
+                                    style: TextStyle(
+                                        color: index == selectedIndex
+                                            ? Colors.white
+                                            : Colors.grey,
+                                        decoration: index == selectedIndex
+                                            ? TextDecoration.underline
+                                            : null),
                                   ),
-                                );
-                              }),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                       Container(
@@ -436,29 +476,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                hourlyWeather[0],
-                                hourlyWeather[1],
-                                hourlyWeather[2],
-                                hourlyWeather[3],
-                                hourlyWeather[4],
-                                hourlyWeather[5],
-                                hourlyWeather[6],
-                                hourlyWeather[7],
-                                hourlyWeather[8],
-                                hourlyWeather[9],
-                                hourlyWeather[10],
-                                hourlyWeather[11],
-
-//                                if(weatherInfo[selectedIndex] == "This Week") {}
-                                dailyWeather[0],
-                                dailyWeather[1],
-                                dailyWeather[2],
-                                dailyWeather[3],
-                                dailyWeather[4],
-                                dailyWeather[5],
-                                dailyWeather[6],
-                              ],
+                              children: selectedWeather(),
                             ),
                           ],
                         ),

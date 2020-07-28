@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 class TopRightFAB extends StatelessWidget {
-  TopRightFAB({@required this.onTap});
+  TopRightFAB({@required this.onTap, @required this.text});
 
   final Function onTap;
+
+  String text;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +18,7 @@ class TopRightFAB extends StatelessWidget {
           child: FloatingActionButton(
             backgroundColor: Color(0xFF2F3148),
             child: Text(
-              "C/F",
+              text,
               style: TextStyle(fontSize: 20, color: Colors.white),
             ),
             onPressed: onTap,
