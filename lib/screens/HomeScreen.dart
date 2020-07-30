@@ -9,6 +9,7 @@ import 'package:clear_skies/widget/WeatherText.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
+import 'package:flutter/services.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen(
@@ -350,7 +351,6 @@ class _HomeScreenState extends State<HomeScreen> {
   ///selectedIndex is 0 by default, when "This Week" is selected, it becomes 1, returning
   ///the daily weather forecast. Used as a child of the final Row in build().
   List<Widget> selectedWeather() {
-    print("test");
     if (selectedIndex == 0) {
       return [
         hourlyWeather[0],
@@ -383,6 +383,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return Scaffold(
       ///The background
       body: Container(

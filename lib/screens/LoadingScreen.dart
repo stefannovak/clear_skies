@@ -5,6 +5,7 @@ import 'package:clear_skies/screens/HomeScreen.dart';
 import 'package:clear_skies/utilities/WeatherModel.dart';
 import 'package:clear_skies/utilities/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class LoadingScreen extends StatefulWidget {
@@ -49,6 +50,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return Scaffold(
       backgroundColor: Color(0xFF4C5775),
       body: Center(
