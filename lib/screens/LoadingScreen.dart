@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:clear_skies/location/Location.dart';
 import 'package:clear_skies/screens/HomeScreen.dart';
 import 'package:clear_skies/utilities/WeatherModel.dart';
@@ -25,14 +27,32 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   void getLocalWeather() async {
     print(widget.unit + "LKFJGHHKJDLFH");
-    var weatherData = await WeatherModel().getLocationWeather(widget.unit);
+    if (widget.unit == "metric" || widget.unit == null) {
+      var weatherData = await WeatherModel().getLocationWeather("metric");
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) {
+          return HomeScreen(weatherData, "F", true);
+        }),
+      );
+    } else if (widget.unit == "imperial") {
+      var weatherData = await WeatherModel().getLocationWeather("imperial");
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) {
+          return HomeScreen(weatherData, "C", false);
+        }),
+      );
+    }
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) {
-        return HomeScreen(weatherData);
-      }),
-    );
+//    var weatherData = await WeatherModel().getLocationWeather(widget.unit);
+
+//    Navigator.push(
+//      context,
+//      MaterialPageRoute(builder: (context) {
+//        return HomeScreen(weatherData);
+//      }),
+//    );
   }
 
   @override

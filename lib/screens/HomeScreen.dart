@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:clear_skies/location/Location.dart';
 import 'package:clear_skies/screens/CityScreen.dart';
 import 'package:clear_skies/screens/DetailedScreen.dart';
@@ -12,8 +14,11 @@ import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen(this.locationData);
+  HomeScreen(this.locationData, this.buttonText, this.isCelsiusBool);
   final locationData;
+
+  final buttonText;
+  final bool isCelsiusBool;
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -128,12 +133,17 @@ class _HomeScreenState extends State<HomeScreen> {
   int sevenDayDay;
   String sevenDayString;
 
-  String buttonIndicator = "F";
+  String buttonIndicator;
+  bool isCelsius;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    String buttonText = widget.buttonText;
+    bool isCelsiusBool = widget.isCelsiusBool;
+    buttonIndicator = buttonText;
+    isCelsius = isCelsiusBool;
     updateUI(widget.locationData);
   }
 
@@ -182,8 +192,8 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(
       () {
         ///////////////////////////////Weather Column
-        double temperature = weatherData["current"]["temp"];
-        temp = temperature.toInt();
+//        double temperature = weatherData["current"]["temp"].toDouble();
+        temp = weatherData["current"]["temp"].toInt();
         condition = weatherData["current"]["weather"][0]["description"];
         main = weatherData["current"]["weather"][0]["main"];
 
@@ -366,6 +376,10 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void sleepSec() {
+    sleep(const Duration(seconds: 2));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -382,19 +396,54 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 TopRightFAB(
+                  text: buttonIndicator,
                   onTap: () {
                     setState(() {
-                      buttonIndicator = "C";
+                      if (isCelsius == true) {
+                        buttonIndicator = "C";
+                        isCelsius = false;
+
+                        ///
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoadingScreen("imperial"),
+                          ),
+                        );
+                      } else if (isCelsius == false) {
+                        buttonIndicator = "F";
+                        isCelsius = true;
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoadingScreen("metric"),
+                          ),
+                        );
+                      }
                     });
 
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LoadingScreen("imperial"),
-                      ),
-                    );
+//                    setState(() async {
+//                      if (isCelcius == true) {
+//                        buttonIndicator = "C";
+//                        isCelcius = false;
+//                        var weatherData =
+//                            await WeatherModel().getLocationWeather("imperial");
+//                        updateUI(weatherData);
+//                      } else if (isCelcius == false) {
+//                        buttonIndicator = "F";
+//                        isCelcius = true;
+//                        var weatherData =
+//                            await WeatherModel().getLocationWeather("metric");
+//                        updateUI(weatherData);
+//                      }
+//                    });
+//                    Navigator.push(
+//                      context,
+//                      MaterialPageRoute(
+//                        builder: (context) => LoadingScreen("imperial"),
+//                      ),
+//                    );
                   },
-                  text: getButtonText(),
                 ),
                 Container(child: WeatherText(condition, localCity, temp)),
                 Container(
