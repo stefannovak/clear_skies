@@ -5,15 +5,7 @@ const String openWeatherMapURL =
     "https://api.openweathermap.org/data/2.5/onecall";
 
 class WeatherModel {
-//  Future<dynamic> getCityWeather(String cityName) async {
-//    var url =
-//        "$openWeatherMapURL?q=$cityName&appid=197fcb4116897e4e04a7e7713ab6977f&units=metric";
-//    NetworkHelper networkHelper = NetworkHelper(url);
-//
-//    var weatherData = await networkHelper.getData();
-//    return weatherData;
-//  }
-
+  ///the asynchronous API call to fetch weather data from openweathermap.org
   Future<dynamic> getLocationWeather(String units) async {
     Location location = Location();
     await location.getCurrentLocation();
@@ -134,9 +126,13 @@ class WeatherModel {
       return "NW";
     } else if (deg >= 326 && deg < 348) {
       return "NNW";
+    } else {
+      return "None";
     }
   }
 
+  ///The minute's I get from the Unix converter aren't ideal,
+  ///so this method just makes it look nicer for the application.
   String minuteHandler(int minute) {
     if (minute == 0) {
       return "00";

@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class DetailedScreen extends StatefulWidget {
-  DetailedScreen(this.weatherData);
+  DetailedScreen(this.weatherData, this.degree);
   final weatherData;
+  final degree;
 
   @override
   _DetailedScreenState createState() => _DetailedScreenState();
@@ -30,13 +31,18 @@ class _DetailedScreenState extends State<DetailedScreen> {
   String nowCond;
   String main;
 
+  String endDegree;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    endDegree = widget.degree;
     updateDetailUI(widget.weatherData);
   }
 
+  ///A method to distinguish between night and day clear weather.
+  ///@param = main : takes a String from the API, and returns the corresponding
+  ///image from assets.
   String getBackground(String main) {
     if (main == "Mist" ||
         main == "Smoke" ||
@@ -57,6 +63,8 @@ class _DetailedScreenState extends State<DetailedScreen> {
     }
   }
 
+  /// The method taking all the API information and setting it to the instance variables.
+  /// The hourly and daily lists are instantiated.
   void updateDetailUI(dynamic weatherData) async {
     setState(() {
       nowCond = weatherData["hourly"][0]["weather"][0]["icon"];
@@ -88,6 +96,7 @@ class _DetailedScreenState extends State<DetailedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      ///The background
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -96,6 +105,7 @@ class _DetailedScreenState extends State<DetailedScreen> {
           ),
         ),
         child: Column(
+          ///The back arrow
           children: <Widget>[
             SafeArea(
               child: Column(
@@ -116,6 +126,8 @@ class _DetailedScreenState extends State<DetailedScreen> {
                       ),
                     ),
                   ),
+
+                  ///The main info container
                   Container(
                     margin: EdgeInsets.all(15),
                     decoration: BoxDecoration(
@@ -130,6 +142,8 @@ class _DetailedScreenState extends State<DetailedScreen> {
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 32.0),
+
+                          ///ROW 1
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
@@ -186,7 +200,7 @@ class _DetailedScreenState extends State<DetailedScreen> {
                                           fontSize: 16),
                                       children: [
                                         TextSpan(
-                                            text: " $temp °c",
+                                            text: " $temp°$endDegree",
                                             style: kDetailTextStyle),
                                       ],
                                     ),
@@ -200,7 +214,7 @@ class _DetailedScreenState extends State<DetailedScreen> {
                                           fontSize: 16),
                                       children: [
                                         TextSpan(
-                                            text: " $feelsLike °c",
+                                            text: " $feelsLike°$endDegree",
                                             style: kDetailTextStyle),
                                       ],
                                     ),
@@ -212,6 +226,8 @@ class _DetailedScreenState extends State<DetailedScreen> {
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 32.0),
+
+                          ///ROW 2
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
@@ -270,7 +286,7 @@ class _DetailedScreenState extends State<DetailedScreen> {
                                           fontSize: 16),
                                       children: [
                                         TextSpan(
-                                            text: " $dew °c",
+                                            text: " $dew°$endDegree",
                                             style: kDetailTextStyle),
                                       ],
                                     ),
@@ -296,6 +312,8 @@ class _DetailedScreenState extends State<DetailedScreen> {
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 32.0),
+
+                          ///ROW 3
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[

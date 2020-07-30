@@ -5,7 +5,7 @@ class WeatherText extends StatelessWidget {
 
   final String desc;
   final String city;
-  final int temp;
+  final String temp;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class WeatherText extends StatelessWidget {
           height: 10.0,
         ),
         Text(
-          "${temp.toString()}°c",
+          temp,
           style: TextStyle(
               color: Colors.white, fontWeight: FontWeight.bold, fontSize: 55.0),
         ),

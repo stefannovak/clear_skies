@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+/// NOT USED AS THE ONECALL API DOES NOT SUPPORT SEARCHING BY CITY.
+///
+/// could perhaps implement some kind of city/coordinates list that the user could
+/// type and choose from, but not for now.
+
 class CityScreen extends StatefulWidget {
   @override
   _CityScreenState createState() => _CityScreenState();

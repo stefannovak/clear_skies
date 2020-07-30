@@ -17,7 +17,6 @@ class LoadingScreen extends StatefulWidget {
 
 class _LoadingScreenState extends State<LoadingScreen> {
   Location location = Location();
-//  String defaultUnit = "metric";
 
   @override
   void initState() {
@@ -25,14 +24,16 @@ class _LoadingScreenState extends State<LoadingScreen> {
     getLocalWeather();
   }
 
+  ///The first call is always in metric from main.dart. This adds the "F" character to the
+  ///FAB in homeScreen, and true for "isCelsius". When the button is tapped to change the
+  ///degrees, the opposite is passed.
   void getLocalWeather() async {
-    print(widget.unit + "LKFJGHHKJDLFH");
     if (widget.unit == "metric" || widget.unit == null) {
       var weatherData = await WeatherModel().getLocationWeather("metric");
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) {
-          return HomeScreen(weatherData, "F", true);
+          return HomeScreen(weatherData, "F", true, "c");
         }),
       );
     } else if (widget.unit == "imperial") {
@@ -40,19 +41,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) {
-          return HomeScreen(weatherData, "C", false);
+          return HomeScreen(weatherData, "C", false, "f");
         }),
       );
     }
-
-//    var weatherData = await WeatherModel().getLocationWeather(widget.unit);
-
-//    Navigator.push(
-//      context,
-//      MaterialPageRoute(builder: (context) {
-//        return HomeScreen(weatherData);
-//      }),
-//    );
   }
 
   @override

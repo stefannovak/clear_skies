@@ -9,6 +9,7 @@ class OvalWeather extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ///The oval shape
     return Container(
       margin: EdgeInsets.fromLTRB(15, 15, 15, 15),
       decoration: BoxDecoration(
@@ -17,6 +18,8 @@ class OvalWeather extends StatelessWidget {
           Radius.circular(40),
         ),
       ),
+
+      ///Contents within the oval
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(

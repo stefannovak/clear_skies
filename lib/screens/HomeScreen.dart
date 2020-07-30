@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:clear_skies/location/Location.dart';
 import 'package:clear_skies/screens/CityScreen.dart';
 import 'package:clear_skies/screens/DetailedScreen.dart';
@@ -11,14 +9,14 @@ import 'package:clear_skies/widget/WeatherText.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
-import 'package:geolocator/geolocator.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen(this.locationData, this.buttonText, this.isCelsiusBool);
+  HomeScreen(
+      this.locationData, this.buttonText, this.isCelsiusBool, this.degree);
   final locationData;
-
   final buttonText;
   final bool isCelsiusBool;
+  final String degree;
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -26,21 +24,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   WeatherModel weatherModel = WeatherModel();
-  String defaultUnit = "metric";
-  int count = 0;
 
   /////////////////////////////////List Tile
   int selectedIndex = 0;
   final List<String> weatherInfo = ['Today', 'This Week', 'Detailed'];
 
-  var localData;
-  double latitude;
-  double longitude;
-
   int temp;
+  String endOfTemp;
   String condition;
   String localCity;
-  String main;
+  String mainWeather;
 
   //////////////////////////////////HOURLY
   List<OvalWeather> hourlyWeather = [];
@@ -136,31 +129,44 @@ class _HomeScreenState extends State<HomeScreen> {
   String buttonIndicator;
   bool isCelsius;
 
+  ///Overrides the initState to take the values passed in from Loading screen, which
+  ///are used to correctly set up the app.
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     String buttonText = widget.buttonText;
     bool isCelsiusBool = widget.isCelsiusBool;
     buttonIndicator = buttonText;
     isCelsius = isCelsiusBool;
     updateUI(widget.locationData);
+    endOfTemp = "°${widget.degree}";
   }
 
+  ///Goes to the detail screen where I make a new call to the API, with the
+  ///correct degree that the user wants. Passes a degree to use in the text
   void toDetailScreen() async {
-    var weatherData = await WeatherModel().getLocationWeather(defaultUnit);
-
-    print(defaultUnit + "AYYYYYYYYY");
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) {
-        return DetailedScreen(weatherData);
-      }),
-    );
+    if (isCelsius == true) {
+      var weatherData = await WeatherModel().getLocationWeather("metric");
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) {
+          return DetailedScreen(weatherData, "c");
+        }),
+      );
+    } else if (isCelsius == false) {
+      var weatherData = await WeatherModel().getLocationWeather("imperial");
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) {
+          return DetailedScreen(weatherData, "f");
+        }),
+      );
+    }
   }
 
-  //Think i can just say if its "50d" weather code, just return clear
+  ///A method to distinguish between night and day clear weather.
+  ///@param = main : takes a String from the API, and returns the corresponding
+  ///image from assets.
   String getBackground(String main) {
     if (main == "Mist" ||
         main == "Smoke" ||
@@ -179,6 +185,8 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  /// The big method taking all the API information and setting it to the instance variables.
+  /// The hourly and daily lists are instantiated. A location is found.
   void updateUI(dynamic weatherData) async {
     Location location = Location();
     await location.getCurrentLocation();
@@ -187,15 +195,16 @@ class _HomeScreenState extends State<HomeScreen> {
         await getCityFromCoordinates(location.latitude, location.longitude);
     localCity.toLowerCase();
 
-//    unixToDay(1595505600);
-
     setState(
       () {
         ///////////////////////////////Weather Column
-//        double temperature = weatherData["current"]["temp"].toDouble();
         temp = weatherData["current"]["temp"].toInt();
         condition = weatherData["current"]["weather"][0]["description"];
-        main = weatherData["current"]["weather"][0]["main"];
+        mainWeather = weatherData["current"]["weather"][0]["main"];
+
+        ///Creates the string for the main temp, taking the degree passed by the constructor,
+        ///adding it onto the end of the temperature.
+        endOfTemp = temp.toString() + endOfTemp;
 
         /////////////////////////////DAILY WEATHER INFO
         oneDayCode = weatherData["daily"][1]["weather"][0]["icon"];
@@ -316,6 +325,7 @@ class _HomeScreenState extends State<HomeScreen> {
     hourlyWeather.add(OvalWeather(elevenCond, elevenHour, elevenTimeNumber));
   }
 
+  ///Used in the updateUI method, get's the local location to an acceptable degree.
   Future<String> getCityFromCoordinates(double lat, double long) async {
     final coordinates = new Coordinates(lat, long);
     var addresses =
@@ -336,6 +346,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return dateString;
   }
 
+  ///Returns the hourly or daily weather forecast based on which tab is selected.
+  ///selectedIndex is 0 by default, when "This Week" is selected, it becomes 1, returning
+  ///the daily weather forecast. Used as a child of the final Row in build().
   List<Widget> selectedWeather() {
     print("test");
     if (selectedIndex == 0) {
@@ -364,29 +377,18 @@ class _HomeScreenState extends State<HomeScreen> {
         dailyWeather[6],
       ];
     } else {
-      print("RIP");
+      return null;
     }
-  }
-
-  String getButtonText() {
-    if (buttonIndicator == "F") {
-      return "F";
-    } else if (buttonIndicator == "C") {
-      return "C";
-    }
-  }
-
-  void sleepSec() {
-    sleep(const Duration(seconds: 2));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      ///The background
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('images/${getBackground(main)}.jpg'),
+            image: AssetImage('images/${getBackground(mainWeather)}.jpg'),
             fit: BoxFit.cover,
           ),
         ),
@@ -395,21 +397,24 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
+                ///The celsius/fahrenheit converter
                 TopRightFAB(
                   text: buttonIndicator,
                   onTap: () {
                     setState(() {
+                      ///If the button currently says "F", make it say C, and rebuild
+                      ///the screen in imperial units.
                       if (isCelsius == true) {
                         buttonIndicator = "C";
                         isCelsius = false;
-
-                        ///
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => LoadingScreen("imperial"),
                           ),
                         );
+
+                        ///The opposite.
                       } else if (isCelsius == false) {
                         buttonIndicator = "F";
                         isCelsius = true;
@@ -421,31 +426,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       }
                     });
-
-//                    setState(() async {
-//                      if (isCelcius == true) {
-//                        buttonIndicator = "C";
-//                        isCelcius = false;
-//                        var weatherData =
-//                            await WeatherModel().getLocationWeather("imperial");
-//                        updateUI(weatherData);
-//                      } else if (isCelcius == false) {
-//                        buttonIndicator = "F";
-//                        isCelcius = true;
-//                        var weatherData =
-//                            await WeatherModel().getLocationWeather("metric");
-//                        updateUI(weatherData);
-//                      }
-//                    });
-//                    Navigator.push(
-//                      context,
-//                      MaterialPageRoute(
-//                        builder: (context) => LoadingScreen("imperial"),
-//                      ),
-//                    );
                   },
                 ),
-                Container(child: WeatherText(condition, localCity, temp)),
+
+                ///The middle bit of the screen, condensed into a WeatherText widget.
+                Container(child: WeatherText(condition, localCity, endOfTemp)),
+
+                ///The bottom container of the screen.
                 Container(
                   //More weather info
                   height: 250.0,
@@ -509,6 +496,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
+
+                      ///The embedded container containing the weather info.
                       Container(
                         height: 150,
                         margin: EdgeInsets.fromLTRB(30, 0, 0, 30),
