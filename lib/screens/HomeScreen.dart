@@ -351,33 +351,55 @@ class _HomeScreenState extends State<HomeScreen> {
   ///selectedIndex is 0 by default, when "This Week" is selected, it becomes 1, returning
   ///the daily weather forecast. Used as a child of the final Row in build().
   List<Widget> selectedWeather() {
-    if (selectedIndex == 0) {
+    if (hourlyWeather.isEmpty || dailyWeather.isEmpty) {
       return [
-        hourlyWeather[0],
-        hourlyWeather[1],
-        hourlyWeather[2],
-        hourlyWeather[3],
-        hourlyWeather[4],
-        hourlyWeather[5],
-        hourlyWeather[6],
-        hourlyWeather[7],
-        hourlyWeather[8],
-        hourlyWeather[9],
-        hourlyWeather[10],
-        hourlyWeather[11],
-      ];
-    } else if (selectedIndex == 1) {
-      return [
-        dailyWeather[0],
-        dailyWeather[1],
-        dailyWeather[2],
-        dailyWeather[3],
-        dailyWeather[4],
-        dailyWeather[5],
-        dailyWeather[6],
+        Container(
+          child: CircularProgressIndicator(),
+          height: 10.0,
+          width: 10.0,
+        )
       ];
     } else {
-      return null;
+      if (selectedIndex == 0) {
+        return [
+          hourlyWeather[0],
+          hourlyWeather[1],
+          hourlyWeather[2],
+          hourlyWeather[3],
+          hourlyWeather[4],
+          hourlyWeather[5],
+          hourlyWeather[6],
+          hourlyWeather[7],
+          hourlyWeather[8],
+          hourlyWeather[9],
+          hourlyWeather[10],
+          hourlyWeather[11],
+        ];
+      } else if (selectedIndex == 1) {
+        return [
+          dailyWeather[0],
+          dailyWeather[1],
+          dailyWeather[2],
+          dailyWeather[3],
+          dailyWeather[4],
+          dailyWeather[5],
+          dailyWeather[6],
+        ];
+      } else {
+        return [OvalWeather("null", 0, "null")];
+      }
+    }
+  }
+
+  Widget buildWeatherText() {
+    if (condition == null || localCity == null || endOfTemp == null) {
+      return Container(
+        child: CircularProgressIndicator(),
+        height: 10.0,
+        width: 10.0,
+      );
+    } else {
+      return WeatherText(condition, localCity, endOfTemp);
     }
   }
 
@@ -434,7 +456,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
 
                 ///The middle bit of the screen, condensed into a WeatherText widget.
-                Container(child: WeatherText(condition, localCity, endOfTemp)),
+//                Container(child: WeatherText(condition, localCity, endOfTemp)),
+                Container(child: buildWeatherText()),
 
                 ///The bottom container of the screen.
                 Container(
