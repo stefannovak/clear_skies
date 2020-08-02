@@ -1,5 +1,7 @@
 import 'dart:convert';
-
+import 'package:clear_skies/screens/ErrorScreen.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class NetworkHelper {
@@ -15,6 +17,10 @@ class NetworkHelper {
       return jsonDecode(data);
     } else {
       print("Error: ${response.statusCode}");
+//      Navigator.push(
+//        context,
+//        MaterialPageRoute(builder: (context) => ErrorScreen()),
+//      );
     }
   }
 }

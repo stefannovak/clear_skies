@@ -456,7 +456,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
 
                 ///The middle bit of the screen, condensed into a WeatherText widget.
-//                Container(child: WeatherText(condition, localCity, endOfTemp)),
                 Container(child: buildWeatherText()),
 
                 ///The bottom container of the screen.
